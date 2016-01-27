@@ -1,0 +1,5 @@
+name: PrimoTracerBlocker
+main: net.primomc.TracerBlocker.TracerBlocker
+version: 1.0
+author: kukelekuuk00
+depend: [ProtocolLib]
