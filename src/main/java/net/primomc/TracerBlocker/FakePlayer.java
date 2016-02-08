@@ -122,6 +122,10 @@ public class FakePlayer
         {
             for ( Player player : observers )
             {
+                if ( !player.getLocation().getWorld().equals( serverLocation.getWorld() ) )
+                {
+                    continue;
+                }
                 if ( player.getLocation().distance( serverLocation ) < 16 )
                 {
                     destroy();
