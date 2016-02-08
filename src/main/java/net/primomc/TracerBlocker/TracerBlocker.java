@@ -120,15 +120,16 @@ public class TracerBlocker extends JavaPlugin
                     {
                         if ( state.getType().equals( Material.CHEST ) || state.getType().equals( Material.TRAPPED_CHEST ) || state.getType().equals( Material.ENDER_CHEST ) )
                         {
-                            double size = .45;
-                            Location targetAA = state.getLocation().clone().add( -size, -size, -size );
-                            Location targetBB = state.getLocation().clone().add( size, -size, -size );
-                            Location targetCC = state.getLocation().clone().add( size, -size, size );
-                            Location targetDD = state.getLocation().clone().add( -size, -size, size );
-                            Location targetEE = state.getLocation().clone().add( -size, size, -size );
-                            Location targetFF = state.getLocation().clone().add( size, size, -size );
+                            double size = .90;
+                            Location targetAA = state.getLocation().clone().add( 0, 0, 0 );
+                            Location targetBB = state.getLocation().clone().add( size, 0, 0 );
+                            Location targetCC = state.getLocation().clone().add( size, 0, size );
+                            Location targetDD = state.getLocation().clone().add( 0, 0, size );
+                            Location targetEE = state.getLocation().clone().add( 0, size, 0 );
+                            Location targetFF = state.getLocation().clone().add( size, size, 0 );
                             Location targetGG = state.getLocation().clone().add( size, size, size );
-                            Location targetHH = state.getLocation().clone().add( -size, size, size );
+                            Location targetHH = state.getLocation().clone().add( 0, size, size );
+
                             int distance = (int) a.getLocation().distance( targetAA );
 
                             // No need to check this
@@ -153,7 +154,7 @@ public class TracerBlocker extends JavaPlugin
                             Block blockGG = getTargetBlock( lookAt( a.getEyeLocation(), targetGG ), distance );
                             Block blockHH = getTargetBlock( lookAt( a.getEyeLocation(), targetHH ), distance );
 
-                            if ( blockAA == null || blockAA.equals( state.getBlock() ) || blockBB == null || blockBB.equals( state.getBlock() ) || blockCC == null || blockCC.equals( state.getBlock() ) || blockDD == null || blockDD.equals( state.getBlock() ) || blockEE == null || blockEE.equals( state.getBlock() ) || blockFF == null || blockFF.equals( state.getBlock() ) || blockGG == null || blockGG.equals( state.getBlock() ) || blockHH == null || blockHH.equals( state.getBlock() ) )
+                            if ( blockAA == null || blockAA.getType().equals( state.getBlock().getType() ) || blockBB == null || blockBB.getType().equals( state.getBlock().getType() ) || blockCC == null || blockCC.getType().equals( state.getBlock().getType() ) || blockDD == null || blockDD.getType().equals( state.getBlock().getType() ) || blockEE == null || blockEE.getType().equals( state.getBlock().getType() ) || blockFF == null || blockFF.getType().equals( state.getBlock().getType() ) || blockGG == null || blockGG.getType().equals( state.getBlock().getType() ) || blockHH == null || blockHH.getType().equals( state.getBlock().getType() ) )
                             {
                                 showBlock( a, state.getLocation() );
                             }
@@ -241,6 +242,7 @@ public class TracerBlocker extends JavaPlugin
                     double width = 0.45;
                     Location targetAA = b.getLocation().clone().add( -width, 0, -width );
                     Location targetBB = b.getLocation().clone().add( width, 1.9, width );
+                    Location targetCC = b.getLocation().clone().add( 0, 1.1, 0 );
                     int distance = (int) a.getLocation().distance( targetAA );
 
                     if ( distance > Settings.PlayerHider.maxDistance )
@@ -253,7 +255,7 @@ public class TracerBlocker extends JavaPlugin
                         showPlayer( a, b );
                         continue;
                     }
-                    if ( getTargetBlock( lookAt( a.getEyeLocation(), targetAA ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetBB ), distance ) == null )
+                    if ( getTargetBlock( lookAt( a.getEyeLocation(), targetAA ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetBB ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetCC ), distance ) == null )
                     {
                         showPlayer( a, b );
                     }
