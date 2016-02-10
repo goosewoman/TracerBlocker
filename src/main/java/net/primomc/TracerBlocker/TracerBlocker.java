@@ -30,7 +30,6 @@ import java.util.*;
 public class TracerBlocker extends JavaPlugin
 {
 
-
     private static final Random rand = new Random();
 
     @Override
@@ -144,24 +143,31 @@ public class TracerBlocker extends JavaPlugin
                                 continue;
                             }
 
-                            Block blockAA = getTargetBlock( lookAt( a.getEyeLocation(), targetAA ), distance );
-                            Block blockBB = getTargetBlock( lookAt( a.getEyeLocation(), targetBB ), distance );
-                            Block blockCC = getTargetBlock( lookAt( a.getEyeLocation(), targetCC ), distance );
-                            Block blockDD = getTargetBlock( lookAt( a.getEyeLocation(), targetDD ), distance );
-
-                            Block blockEE = getTargetBlock( lookAt( a.getEyeLocation(), targetEE ), distance );
-                            Block blockFF = getTargetBlock( lookAt( a.getEyeLocation(), targetFF ), distance );
-                            Block blockGG = getTargetBlock( lookAt( a.getEyeLocation(), targetGG ), distance );
-                            Block blockHH = getTargetBlock( lookAt( a.getEyeLocation(), targetHH ), distance );
-
-                            if ( blockAA == null || blockAA.getType().equals( state.getBlock().getType() ) || blockBB == null || blockBB.getType().equals( state.getBlock().getType() ) || blockCC == null || blockCC.getType().equals( state.getBlock().getType() ) || blockDD == null || blockDD.getType().equals( state.getBlock().getType() ) || blockEE == null || blockEE.getType().equals( state.getBlock().getType() ) || blockFF == null || blockFF.getType().equals( state.getBlock().getType() ) || blockGG == null || blockGG.getType().equals( state.getBlock().getType() ) || blockHH == null || blockHH.getType().equals( state.getBlock().getType() ) )
+                            try
                             {
-                                showBlock( a, state.getLocation() );
+                                Block blockAA = getTargetBlock( lookAt( a.getEyeLocation(), targetAA ), distance );
+                                Block blockBB = getTargetBlock( lookAt( a.getEyeLocation(), targetBB ), distance );
+                                Block blockCC = getTargetBlock( lookAt( a.getEyeLocation(), targetCC ), distance );
+                                Block blockDD = getTargetBlock( lookAt( a.getEyeLocation(), targetDD ), distance );
+
+                                Block blockEE = getTargetBlock( lookAt( a.getEyeLocation(), targetEE ), distance );
+                                Block blockFF = getTargetBlock( lookAt( a.getEyeLocation(), targetFF ), distance );
+                                Block blockGG = getTargetBlock( lookAt( a.getEyeLocation(), targetGG ), distance );
+                                Block blockHH = getTargetBlock( lookAt( a.getEyeLocation(), targetHH ), distance );
+
+                                if ( blockAA == null || blockAA.getType().equals( state.getBlock().getType() ) || blockBB == null || blockBB.getType().equals( state.getBlock().getType() ) || blockCC == null || blockCC.getType().equals( state.getBlock().getType() ) || blockDD == null || blockDD.getType().equals( state.getBlock().getType() ) || blockEE == null || blockEE.getType().equals( state.getBlock().getType() ) || blockFF == null || blockFF.getType().equals( state.getBlock().getType() ) || blockGG == null || blockGG.getType().equals( state.getBlock().getType() ) || blockHH == null || blockHH.getType().equals( state.getBlock().getType() ) )
+                                {
+                                    showBlock( a, state.getLocation() );
+                                }
+                                else
+                                {
+                                    hideBlock( a, state.getLocation() );
+                                }
                             }
-                            else
+                            catch ( IllegalStateException ignored )
                             {
-                                hideBlock( a, state.getLocation() );
                             }
+
                         }
                     }
                 }
@@ -212,8 +218,7 @@ public class TracerBlocker extends JavaPlugin
                     z = rand( -40, 40 );
                 }
                 fakeLocation = player.getLocation().clone().add( x, y, z );
-            }
-            while ( fakeLocation.distance( player.getLocation() ) < 16 );
+            } while ( fakeLocation.distance( player.getLocation() ) < 16 );
             new FakePlayer( this, fakeLocation ).addObserver( player );
         }
     }
@@ -255,13 +260,21 @@ public class TracerBlocker extends JavaPlugin
                         showPlayer( a, b );
                         continue;
                     }
-                    if ( getTargetBlock( lookAt( a.getEyeLocation(), targetAA ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetBB ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetCC ), distance ) == null )
+                    try
                     {
-                        showPlayer( a, b );
+
+                        if ( getTargetBlock( lookAt( a.getEyeLocation(), targetAA ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetBB ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetCC ), distance ) == null )
+                        {
+                            showPlayer( a, b );
+                        }
+                        else
+                        {
+                            hidePlayer( a, b );
+                        }
                     }
-                    else
+                    catch ( IllegalStateException ignored )
                     {
-                        hidePlayer( a, b );
+
                     }
                 }
             }
@@ -344,8 +357,17 @@ public class TracerBlocker extends JavaPlugin
         return loc;
     }
 
-    private Block getTargetBlock( Location direction, int maxDistance )
+    private Block getTargetBlock( Location direction, int maxDistance ) throws IllegalStateException
     {
+        direction = direction.clone();
+        if ( direction.getY() > direction.getWorld().getMaxHeight() )
+        {
+            direction.setY( direction.getWorld().getMaxHeight() );
+        }
+        if ( direction.getY() <= 0 )
+        {
+            direction.setY( 0 );
+        }
         for ( Iterator<Block> it = new BlockIterator( direction, 0, maxDistance ); it.hasNext(); )
         {
             Block block = it.next();
