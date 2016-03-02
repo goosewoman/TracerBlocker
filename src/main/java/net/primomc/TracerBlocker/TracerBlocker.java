@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.BlockIterator;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Random;
 
 /*
  * Copyright 2016 Luuk Jacobs
@@ -31,6 +33,7 @@ public class TracerBlocker extends JavaPlugin
 {
 
     private static final Random rand = new Random();
+    private PlayerHider playerHider;
 
     @Override
     public void onEnable()
@@ -40,6 +43,7 @@ public class TracerBlocker extends JavaPlugin
 
         if ( Settings.PlayerHider.enabled )
         {
+            playerHider = new PlayerHider( this );
             getServer().getScheduler().runTaskTimer( this, new Runnable()
             {
                 @Override
@@ -88,6 +92,8 @@ public class TracerBlocker extends JavaPlugin
         Settings.ChestHider.maxDistance = getConfig().getInt( "chesthider.max-distance" );
         Settings.ChestHider.disabledWorlds = getConfig().getStringList( "chesthider.disabledWorlds" );
 
+        Settings.FakePlayers.enabled = getConfig().getBoolean( "fakeplayers.enabled" );
+        Settings.FakePlayers.moving = getConfig().getBoolean( "fakeplayers.moving" );
         Settings.FakePlayers.enabled = getConfig().getBoolean( "fakeplayers.enabled" );
         Settings.FakePlayers.everyTicks = getConfig().getInt( "fakeplayers.every-ticks" );
         Settings.FakePlayers.secondsAlive = getConfig().getInt( "fakeplayers.seconds-alive" );
@@ -244,7 +250,7 @@ public class TracerBlocker extends JavaPlugin
                     {
                         continue;
                     }
-                    double width = 0.45;
+                    double width = 0.48;
                     Location targetAA = b.getLocation().clone().add( -width, 0, -width );
                     Location targetBB = b.getLocation().clone().add( width, 1.9, width );
                     Location targetCC = b.getLocation().clone().add( 0, 1.1, 0 );
@@ -254,10 +260,14 @@ public class TracerBlocker extends JavaPlugin
                     {
                         continue;
                     }
+                    if ( !a.canSee( b ) )
+                    {
+                        continue;
+                    }
 
                     if ( distance <= Settings.PlayerHider.ignoreDistance )
                     {
-                        showPlayer( a, b );
+                        playerHider.showPlayer( a, b );
                         continue;
                     }
                     try
@@ -265,11 +275,11 @@ public class TracerBlocker extends JavaPlugin
 
                         if ( getTargetBlock( lookAt( a.getEyeLocation(), targetAA ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetBB ), distance ) == null || getTargetBlock( lookAt( a.getEyeLocation(), targetCC ), distance ) == null )
                         {
-                            showPlayer( a, b );
+                            playerHider.showPlayer( a, b );
                         }
                         else
                         {
-                            hidePlayer( a, b );
+                            playerHider.hidePlayer( a, b );
                         }
                     }
                     catch ( IllegalStateException ignored )
@@ -278,43 +288,6 @@ public class TracerBlocker extends JavaPlugin
                     }
                 }
             }
-        }
-    }
-
-    Map<UUID, List<UUID>> hiddenPlayers = new HashMap<>();
-
-    private void hidePlayer( Player a, Player b )
-    {
-        if ( !a.canSee( b ) )
-        {
-            return;
-        }
-        List<UUID> list;
-        if ( hiddenPlayers.containsKey( a.getUniqueId() ) )
-        {
-            list = hiddenPlayers.get( a.getUniqueId() );
-        }
-        else
-        {
-            list = new ArrayList<>();
-        }
-        list.add( b.getUniqueId() );
-        a.hidePlayer( b );
-        hiddenPlayers.put( a.getUniqueId(), list );
-    }
-
-    private void showPlayer( Player a, Player b )
-    {
-        if ( !hiddenPlayers.containsKey( a.getUniqueId() ) )
-        {
-            return;
-        }
-        List<UUID> list = hiddenPlayers.get( a.getUniqueId() );
-        if ( list.contains( b.getUniqueId() ) )
-        {
-            list.remove( b.getUniqueId() );
-            a.showPlayer( b );
-            hiddenPlayers.put( a.getUniqueId(), list );
         }
     }
 
@@ -428,6 +401,11 @@ public class TracerBlocker extends JavaPlugin
         TRANSPARENT_MATERIALS.add( Material.STAINED_GLASS.getId() );
         TRANSPARENT_MATERIALS.add( Material.THIN_GLASS.getId() );
         TRANSPARENT_MATERIALS.add( Material.STAINED_GLASS_PANE.getId() );
+        TRANSPARENT_MATERIALS.add( Material.CHEST.getId() );
+        TRANSPARENT_MATERIALS.add( Material.ENDER_CHEST.getId() );
+        TRANSPARENT_MATERIALS.add( Material.TRAPPED_CHEST.getId() );
+        TRANSPARENT_MATERIALS.add( Material.LEAVES.getId() );
+        TRANSPARENT_MATERIALS.add( Material.LEAVES_2.getId() );
     }
 
     @Override

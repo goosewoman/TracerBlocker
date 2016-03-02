@@ -24,6 +24,10 @@ chesthider:
 #spawns invisible fake client-side players for every player. Can be quite CPU intensive. If you get a low TPS, then you should disable this.
 fakeplayers:
   enabled: true
+  #If the fake players should be moving or not.
+  #Setting this to false will make the "speed" option useless.
+  #If you have lag problems, both FPS(clientside) and TPS(serverside) this might lower it.
+  moving: true
   #how often it checks if someone is visible/invisible. there are 20 tickets per second, so every 1 tick is every 50 milliseconds
   every-ticks: 40
   #the amount of seconds the fake players should exist for.

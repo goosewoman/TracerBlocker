@@ -78,11 +78,31 @@ public class FakePlayer
                     destroy();
                     return;
                 }
-                moveEntity();
-                updateEntity();
+                if ( Settings.FakePlayers.moving )
+                {
+                    moveEntity();
+                    updateEntity();
+                }
+                maybeDestroyEntity();
                 i++;
             }
         }.runTaskTimer( plugin, 1, Settings.FakePlayers.speed );
+    }
+
+    private void maybeDestroyEntity()
+    {
+        for ( Player player : observers )
+        {
+            if ( !player.getLocation().getWorld().equals( serverLocation.getWorld() ) )
+            {
+                continue;
+            }
+            if ( player.getLocation().distance( serverLocation ) < 16 )
+            {
+                destroy();
+                return;
+            }
+        }
     }
 
     private void moveEntity()
@@ -120,18 +140,6 @@ public class FakePlayer
         }
         else if ( !serverLocation.equals( clientLocation ) )
         {
-            for ( Player player : observers )
-            {
-                if ( !player.getLocation().getWorld().equals( serverLocation.getWorld() ) )
-                {
-                    continue;
-                }
-                if ( player.getLocation().distance( serverLocation ) < 16 )
-                {
-                    destroy();
-                    return;
-                }
-            }
             broadcastMoveEntity();
             clientLocation = serverLocation.clone();
         }

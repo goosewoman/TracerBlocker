@@ -41,6 +41,7 @@ public class Settings
     static class FakePlayers
     {
         public static boolean enabled = false;
+        public static boolean moving = true;
         public static int everyTicks = 40;
         public static int secondsAlive = 5;
         public static int speed = 3;
