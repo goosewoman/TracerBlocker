@@ -1,40 +1,41 @@
 /**
- * This file is part of PacketWrapper.
- * Copyright (C) 2012-2015 Kristian S. Strangeland
- * Copyright (C) 2015 dmulloy2
+ * PacketWrapper - ProtocolLib wrappers for Minecraft packets
+ * Copyright (C) dmulloy2 <http://dmulloy2.net>
+ * Copyright (C) Kristian S. Strangeland
  * <p/>
- * PacketWrapper is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * <p/>
- * PacketWrapper is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * <p/>
- * You should have received a copy of the GNU Lesser General Public License
- * along with PacketWrapper.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.primomc.TracerBlocker.PacketWrapper;
+package net.primomc.TracerBlocker.PacketWrapper.v1_9;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import net.primomc.TracerBlocker.PacketWrapper.AbstractPacket;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-public class WrapperPlayServerEntityMoveLook extends AbstractPacket
+public class WrapperPlayServerRelEntityMoveLook extends AbstractPacket
 {
-    public static final PacketType TYPE = PacketType.Play.Server.ENTITY_MOVE_LOOK;
+    public static final PacketType TYPE = PacketType.Play.Server.REL_ENTITY_MOVE_LOOK;
 
-    public WrapperPlayServerEntityMoveLook()
+    public WrapperPlayServerRelEntityMoveLook()
     {
         super( new PacketContainer( TYPE ), TYPE );
         handle.getModifier().writeDefaults();
     }
 
-    public WrapperPlayServerEntityMoveLook( PacketContainer packet )
+    public WrapperPlayServerRelEntityMoveLook( PacketContainer packet )
     {
         super( packet, TYPE );
     }
@@ -43,6 +44,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
      * Retrieve Entity ID.
      * <p>
      * Notes: entity's ID
+     *
      * @return The current Entity ID
      */
     public int getEntityID()
@@ -52,6 +54,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Set Entity ID.
+     *
      * @param value - new value.
      */
     public void setEntityID( int value )
@@ -61,6 +64,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Retrieve the entity of the painting that will be spawned.
+     *
      * @param world - the current world of the entity.
      * @return The spawned entity.
      */
@@ -71,6 +75,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Retrieve the entity of the painting that will be spawned.
+     *
      * @param event - the packet event.
      * @return The spawned entity.
      */
@@ -81,6 +86,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Retrieve DX.
+     *
      * @return The current DX
      */
     public double getDx()
@@ -90,6 +96,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Set DX.
+     *
      * @param value - new value.
      */
     public void setDx( double value )
@@ -99,6 +106,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Retrieve DY.
+     *
      * @return The current DY
      */
     public double getDy()
@@ -108,6 +116,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Set DY.
+     *
      * @param value - new value.
      */
     public void setDy( double value )
@@ -117,6 +126,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Retrieve DZ.
+     *
      * @return The current DZ
      */
     public double getDz()
@@ -126,6 +136,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Set DZ.
+     *
      * @param value - new value.
      */
     public void setDz( double value )
@@ -135,6 +146,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Retrieve the yaw of the current entity.
+     *
      * @return The current Yaw
      */
     public float getYaw()
@@ -144,6 +156,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Set the yaw of the current entity.
+     *
      * @param value - new yaw.
      */
     public void setYaw( float value )
@@ -153,6 +166,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Retrieve the pitch of the current entity.
+     *
      * @return The current pitch
      */
     public float getPitch()
@@ -162,6 +176,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Set the pitch of the current entity.
+     *
      * @param value - new pitch.
      */
     public void setPitch( float value )
@@ -171,6 +186,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Retrieve On Ground.
+     *
      * @return The current On Ground
      */
     public boolean getOnGround()
@@ -180,6 +196,7 @@ public class WrapperPlayServerEntityMoveLook extends AbstractPacket
 
     /**
      * Set On Ground.
+     *
      * @param value - new value.
      */
     public void setOnGround( boolean value )

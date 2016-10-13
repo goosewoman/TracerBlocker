@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class Settings
 {
-    static class PlayerHider
+    public static class PlayerHider
     {
         public static boolean enabled = false;
         public static int everyTicks = 1;
@@ -29,7 +29,7 @@ public class Settings
         public static List<String> disabledWorlds = new ArrayList<>();
     }
 
-    static class ChestHider
+    public static class ChestHider
     {
         public static boolean enabled = false;
         public static int everyTicks = 3;
@@ -38,7 +38,7 @@ public class Settings
         public static List<String> disabledWorlds = new ArrayList<>();
     }
 
-    static class FakePlayers
+    public static class FakePlayers
     {
         public static boolean enabled = false;
         public static boolean moving = true;

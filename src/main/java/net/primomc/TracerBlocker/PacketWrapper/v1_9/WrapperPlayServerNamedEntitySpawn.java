@@ -1,27 +1,28 @@
 /**
- * This file is part of PacketWrapper.
- * Copyright (C) 2012-2015 Kristian S. Strangeland
- * Copyright (C) 2015 dmulloy2
+ * PacketWrapper - ProtocolLib wrappers for Minecraft packets
+ * Copyright (C) dmulloy2 <http://dmulloy2.net>
+ * Copyright (C) Kristian S. Strangeland
  * <p/>
- * PacketWrapper is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * <p/>
- * PacketWrapper is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * <p/>
- * You should have received a copy of the GNU Lesser General Public License
- * along with PacketWrapper.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.primomc.TracerBlocker.PacketWrapper;
+package net.primomc.TracerBlocker.PacketWrapper.v1_9;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import net.primomc.TracerBlocker.PacketWrapper.AbstractPacket;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
@@ -47,6 +48,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
      * Retrieve Entity ID.
      * <p>
      * Notes: entity's ID
+     *
      * @return The current Entity ID
      */
     public int getEntityID()
@@ -56,6 +58,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Set Entity ID.
+     *
      * @param value - new value.
      */
     public void setEntityID( int value )
@@ -65,6 +68,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Retrieve the entity of the painting that will be spawned.
+     *
      * @param world - the current world of the entity.
      * @return The spawned entity.
      */
@@ -75,6 +79,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Retrieve the entity of the painting that will be spawned.
+     *
      * @param event - the packet event.
      * @return The spawned entity.
      */
@@ -87,6 +92,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
      * Retrieve Player UUID.
      * <p>
      * Notes: player's UUID
+     *
      * @return The current Player UUID
      */
     public UUID getPlayerUUID()
@@ -96,6 +102,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Set Player UUID.
+     *
      * @param value - new value.
      */
     public void setPlayerUUID( UUID value )
@@ -105,6 +112,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Retrieve the position of the spawned entity as a vector.
+     *
      * @return The position as a vector.
      */
     public Vector getPosition()
@@ -114,6 +122,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Set the position of the spawned entity using a vector.
+     *
      * @param position - the new position.
      */
     public void setPosition( Vector position )
@@ -123,68 +132,39 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
         setZ( position.getZ() );
     }
 
-    /**
-     * Retrieve the x axis of the position.
-     * <p>
-     * Note that the coordinate is rounded off to the nearest 1/32 of a meter.
-     * @return The current X
-     */
     public double getX()
     {
-        return handle.getIntegers().read( 1 ) / 32.0D;
+        return handle.getDoubles().read( 0 );
     }
 
-    /**
-     * Set the x axis of the position.
-     * @param value - new value.
-     */
     public void setX( double value )
     {
-        handle.getIntegers().write( 1, (int) Math.floor( value * 32.0D ) );
+        handle.getDoubles().write( 0, value );
     }
 
-    /**
-     * Retrieve the y axis of the position.
-     * <p>
-     * Note that the coordinate is rounded off to the nearest 1/32 of a meter.
-     * @return The current y
-     */
     public double getY()
     {
-        return handle.getIntegers().read( 2 ) / 32.0D;
+        return handle.getDoubles().read( 1 );
     }
 
-    /**
-     * Set the y axis of the position.
-     * @param value - new value.
-     */
     public void setY( double value )
     {
-        handle.getIntegers().write( 2, (int) Math.floor( value * 32.0D ) );
+        handle.getDoubles().write( 1, value );
     }
 
-    /**
-     * Retrieve the z axis of the new position.
-     * <p>
-     * Note that the coordinate is rounded off to the nearest 1/32 of a meter.
-     * @return The current z
-     */
     public double getZ()
     {
-        return handle.getIntegers().read( 3 ) / 32.0D;
+        return handle.getDoubles().read( 2 );
     }
 
-    /**
-     * Set the z axis of the new position.
-     * @param value - new value.
-     */
     public void setZ( double value )
     {
-        handle.getIntegers().write( 3, (int) Math.floor( value * 32.0D ) );
+        handle.getDoubles().write( 2, value );
     }
 
     /**
      * Retrieve the yaw of the spawned entity.
+     *
      * @return The current Yaw
      */
     public float getYaw()
@@ -194,6 +174,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Set the yaw of the spawned entity.
+     *
      * @param value - new yaw.
      */
     public void setYaw( float value )
@@ -203,6 +184,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Retrieve the pitch of the spawned entity.
+     *
      * @return The current pitch
      */
     public float getPitch()
@@ -212,6 +194,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Set the pitch of the spawned entity.
+     *
      * @param value - new pitch.
      */
     public void setPitch( float value )
@@ -220,29 +203,10 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
     }
 
     /**
-     * Retrieve Current Item.
-     * <p>
-     * Notes: the item the player is currently holding. Note that this should be 0 for "no item", unlike -1 used in other packets. A negative value crashes clients.
-     * @return The current Current Item
-     */
-    public int getCurrentItem()
-    {
-        return handle.getIntegers().read( 4 );
-    }
-
-    /**
-     * Set Current Item.
-     * @param value - new value.
-     */
-    public void setCurrentItem( int value )
-    {
-        handle.getIntegers().write( 4, value );
-    }
-
-    /**
      * Retrieve Metadata.
      * <p>
      * Notes: the client will crash if no metadata is sent
+     *
      * @return The current Metadata
      */
     public WrappedDataWatcher getMetadata()
@@ -252,6 +216,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket
 
     /**
      * Set Metadata.
+     *
      * @param value - new value.
      */
     public void setMetadata( WrappedDataWatcher value )

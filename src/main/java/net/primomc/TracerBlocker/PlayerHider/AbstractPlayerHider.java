@@ -1,11 +1,8 @@
-package net.primomc.TracerBlocker;
+package net.primomc.TracerBlocker.PlayerHider;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -17,11 +14,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Map;
-
-import static com.comphenix.protocol.PacketType.Play.Server.*;
 
 /**
  * Copyright ${year} Luuk Jacobs
@@ -39,7 +33,7 @@ import static com.comphenix.protocol.PacketType.Play.Server.*;
  * limitations under the License.
  */
 
-public class PlayerHider
+public abstract class AbstractPlayerHider
 {
     protected Table<Integer, Integer, Boolean> observerEntityMap = HashBasedTable.create();
 
@@ -53,12 +47,10 @@ public class PlayerHider
         showEntity( a, b );
     }
 
-    private static final PacketType[] ENTITY_PACKETS = { ENTITY_EQUIPMENT, BED, ANIMATION, NAMED_ENTITY_SPAWN, COLLECT, ENTITY_VELOCITY, REL_ENTITY_MOVE, ENTITY_LOOK, ENTITY_MOVE_LOOK, ENTITY_TELEPORT, ENTITY_HEAD_ROTATION, ENTITY_STATUS, ATTACH_ENTITY, ENTITY_METADATA, ENTITY_EFFECT, REMOVE_ENTITY_EFFECT, BLOCK_BREAK_ANIMATION };
-
-    private ProtocolManager manager;
+    protected ProtocolManager manager;
 
     // Listeners
-    private PacketAdapter protocolListener;
+    protected PacketAdapter protocolListener;
 
     // Current policy
 
@@ -67,7 +59,7 @@ public class PlayerHider
      *
      * @param plugin - the plugin that controls this entity hider.
      */
-    public PlayerHider( Plugin plugin )
+    public AbstractPlayerHider( Plugin plugin )
     {
         Preconditions.checkNotNull( plugin, "plugin cannot be NULL." );
 
@@ -130,7 +122,7 @@ public class PlayerHider
      *
      * @return Our listener.
      */
-    private Listener constructBukkit()
+    protected Listener constructBukkit()
     {
         return new Listener()
         {
@@ -157,23 +149,18 @@ public class PlayerHider
         return !getMembership( observer, entityID );
     }
 
-    protected void removeEntity( int entityID )
-    {
-        for ( Map<Integer, Boolean> maps : observerEntityMap.rowMap().values() )
-        {
-            maps.remove( entityID );
-        }
-    }
-
     /**
      * Invoked when a player logs out.
      *
      * @param player - the player that jused logged out.
      */
-    protected void removePlayer( Player player )
+    synchronized protected void removePlayer( Player player )
     {
-        observerEntityMap.rowMap().remove( player.getEntityId() );
-        removeEntity( player.getEntityId() );
+        Map<Integer, Boolean> row = observerEntityMap.row( player.getEntityId() );
+        for ( int entityID : row.keySet() )
+        {
+            observerEntityMap.remove( player.getEntityId(), entityID );
+        }
     }
 
     /**
@@ -182,23 +169,8 @@ public class PlayerHider
      * @param plugin - the parent plugin.
      * @return The packet listener.
      */
-    private PacketAdapter constructProtocol( Plugin plugin )
-    {
-        return new PacketAdapter( plugin, ENTITY_PACKETS )
-        {
-            @Override
-            public void onPacketSending( PacketEvent event )
-            {
-                int entityID = event.getPacket().getIntegers().read( 0 );
+    protected abstract PacketAdapter constructProtocol( Plugin plugin );
 
-                // See if this packet should be cancelled
-                if ( !isVisible( event.getPlayer(), entityID ) )
-                {
-                    event.setCancelled( true );
-                }
-            }
-        };
-    }
 
     /**
      * Allow the observer to see an entity that was previously hidden.
@@ -227,28 +199,8 @@ public class PlayerHider
      * @param entity   - the entity to hide.
      * @return TRUE if the entity was previously visible, FALSE otherwise.
      */
-    public final boolean hideEntity( Player observer, Entity entity )
-    {
-        validate( observer, entity );
-        boolean visibleBefore = setVisibility( observer, entity.getEntityId(), false );
+    abstract boolean hideEntity( Player observer, Entity entity );
 
-        if ( visibleBefore )
-        {
-            PacketContainer destroyEntity = new PacketContainer( ENTITY_DESTROY );
-            destroyEntity.getIntegerArrays().write( 0, new int[]{ entity.getEntityId() } );
-
-            // Make the entity disappear
-            try
-            {
-                manager.sendServerPacket( observer, destroyEntity );
-            }
-            catch ( InvocationTargetException e )
-            {
-                throw new RuntimeException( "Cannot send server packet.", e );
-            }
-        }
-        return visibleBefore;
-    }
 
     /**
      * Determine if the given entity has been hidden from an observer.
@@ -261,7 +213,7 @@ public class PlayerHider
      * @param entity   - the entity that may be hidden.
      * @return TRUE if the player may see the entity, FALSE if the entity has been hidden.
      */
-    public final boolean canSee( Player observer, Entity entity )
+    public boolean canSee( Player observer, Entity entity )
     {
         validate( observer, entity );
 
@@ -269,7 +221,7 @@ public class PlayerHider
     }
 
     // For valdiating the input parameters
-    private void validate( Player observer, Entity entity )
+    protected void validate( Player observer, Entity entity )
     {
         Preconditions.checkNotNull( observer, "observer cannot be NULL." );
         Preconditions.checkNotNull( entity, "entity cannot be NULL." );

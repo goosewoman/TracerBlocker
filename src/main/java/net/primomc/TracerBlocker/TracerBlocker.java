@@ -2,7 +2,10 @@ package net.primomc.TracerBlocker;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
-import net.primomc.TracerBlocker.PacketWrapper.WrapperPlayServerBlockChange;
+import net.primomc.TracerBlocker.FakePlayer.FakePlayer1_9;
+import net.primomc.TracerBlocker.PacketWrapper.v1_9.WrapperPlayServerBlockChange;
+import net.primomc.TracerBlocker.PlayerHider.AbstractPlayerHider;
+import net.primomc.TracerBlocker.PlayerHider.PlayerHider1_9;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -33,17 +36,29 @@ public class TracerBlocker extends JavaPlugin
 {
 
     private static final Random rand = new Random();
-    private PlayerHider playerHider;
+    private AbstractPlayerHider playerHider;
 
     @Override
     public void onEnable()
     {
-
+        if ( getServer().getVersion().contains( "1.8" ) )
+        {
+            this.getServer().getPluginManager().disablePlugin( this );
+            getLogger().warning( "PrimoTracerBlocker currently only supports 1.9.x" );
+        }
         loadConfig();
 
+        getLogger().info( getServer().getVersion() );
         if ( Settings.PlayerHider.enabled )
         {
-            playerHider = new PlayerHider( this );
+            if ( getServer().getVersion().contains( "1.8" ) )
+            {
+                //                playerHider = new PlayerHider1_8( this );
+            }
+            if ( getServer().getVersion().contains( "1.9" ) )
+            {
+                playerHider = new PlayerHider1_9( this );
+            }
             getServer().getScheduler().runTaskTimer( this, new Runnable()
             {
                 @Override
@@ -225,7 +240,20 @@ public class TracerBlocker extends JavaPlugin
                 }
                 fakeLocation = player.getLocation().clone().add( x, y, z );
             } while ( fakeLocation.distance( player.getLocation() ) < 16 );
-            new FakePlayer( this, fakeLocation ).addObserver( player );
+            newFakePlayer( fakeLocation, player );
+
+        }
+    }
+
+    private void newFakePlayer( Location fakeLocation, Player player )
+    {
+        if ( getServer().getVersion().contains( "1.9" ) )
+        {
+            new FakePlayer1_9( this, fakeLocation ).addObserver( player );
+        }
+        else if ( getServer().getVersion().contains( "1.8" ) )
+        {
+            //            new FakePlayer1_8( this, fakeLocation ).addObserver( player );
         }
     }
 
